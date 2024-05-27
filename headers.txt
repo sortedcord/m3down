@@ -1,0 +1,22 @@
+"headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US",
+    "priority": "u=1, i",
+    "sec-ch-ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "x-requested-with": "XMLHttpRequest",
+    "x-udemy-cache-brand": "",
+    "x-udemy-cache-campaign-code": "",
+    "x-udemy-cache-device": "",
+    "x-udemy-cache-language": "en",
+    "x-udemy-cache-logged-in": "1",
+    "x-udemy-cache-marketplace-country": "",
+    "x-udemy-cache-price-country": "",
+    "x-udemy-cache-release": "",
+    "x-udemy-cache-user": "",
+    "x-udemy-cache-version": ""
+  }

@@ -1,0 +1,40 @@
+{
+    "auth": "cookies",
+    "credentials": {
+        "file":"credentials.json"
+    },
+    "cookies": "cookies.json",
+    "selenium": {
+        "webdriver_path": "chrome/chromedriver.exe",
+        "browser_path": "chrome/chrome.exe",
+        "headless": false
+        },
+    "cache": {
+        "directory":".ud_cache",
+        "settings": {
+            "courseIdLookup": {
+                "use_cache": true,
+                "expire": 0
+            },
+            "courseContent": {
+                "use_cache": true,
+                "expire": 5184000
+            },
+            "lessonStreams": {
+                "use_cache": true,
+                "expire": 86400
+            },
+            "purchasedCourses": {
+                "use_cache": true,
+                "expire": 86400
+            }
+        }        
+    },
+    "downloads": {
+        "video_resolution": "max",
+        "location": "downloads/$course-slug/$ind-section-slug/$ind-lesson-slug.$ext",
+        "threads":4,
+        "captions":true
+    },
+    "xhr_headers": "headers.txt"
+}
