@@ -176,35 +176,15 @@ class SettingsManager():
             quit()
 
 
-def process_cookies(process:CookieProcessType, settings:SettingsManager) -> tuple[dict, SettingsManager]:
-    if process == CookieProcessType.LOAD:
-        try:
-            with open('cookies.json', 'r') as file:
-                content = file.read()
-        except FileNotFoundError:
-            logger.error("Cookies file does not exist. Cookies are to be stored in cookies.json")
-            quit()
-        except IOError:
-            logger.error("Cookies file could not be read")
-            quit()
-        
-        if content.strip() == "":
-            logger.error("Cookies file is empty")
-            quit()
-        
-        try:
-            cookies = json.loads(content)
-        except:
-            logger.error("Cookies file could not be parsed")
-            quit()
+def parse_cookies(cookies_path:str) -> tuple[dict]:
 
-        try:
-            for cookie in cookies:
-                if cookie['name'] == "ud_last_auth_information":
-                    settings.credentials.email = slugify(cookie['value']).split("-user-email-")[-1].split('-suggested-')[0]
-        except:
-            pass
-
-        settings.cookies = cookies
-        
-        return settings
+    with open(cookies_path, 'r') as file:
+        content = file.read()
+    
+    try:
+        cookies = json.loads(content)
+    except:
+        logger.error("Cookies file could not be parsed")
+        quit()
+    
+    return cookies

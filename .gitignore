@@ -3,7 +3,11 @@ chrome/
 .vscode
 
 .ud_cache
+downloads
 
 credentials.json
 headers.txt
 cookies.json
+headers.txt
+*.ts
+.udownsegments

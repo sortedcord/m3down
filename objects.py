@@ -15,10 +15,6 @@ from utils import slugify, parse_m3u, get_filename_from_link, download_ts
 
 
 class Course():
-    slug = None
-    id=0
-    content = None
-
     def __init__(self, id:int, settings:SettingsManager, driver:webdriver, title:str=None, url:str=None) -> None:
         if title is None:
             title = ""
@@ -42,7 +38,7 @@ class Course():
                             f"https://www.udemy.com/api-2.0/courses/{self.id}/subscriber-curriculum-items/?page_size=1200&fields%5Blecture%5D=title,object_index,asset,supplementary_assets&fields%5Bquiz%5D=title,object_index,is_published,sort_order,type&fields%5Bpractice%5D=title,object_index,is_published,sort_order&fields%5Bchapter%5D=title,object_index,is_published,sort_order&fields%5Basset%5D=title,filename,asset_type,is_external&caching_intent=True",
                             settings=settings,
                             cache_role=CacheRole.courseContent,
-                            id=self.id)
+                            cache_id=self.id)
             
             response = _['results']
         except KeyError:
@@ -155,6 +151,10 @@ class Lesson():
         logger.debug(f"Set download location as {download_location}")
         os.makedirs(os.path.dirname(download_location), exist_ok=True)
 
+        if os.path.exists(download_location):
+            logger.success(f"Downloaded Lesson{self.h_index[0]}.{self.h_index[1]} {self.title}")
+            return
+
 
         if self.lesson_type == LessonType.VIDEO:
             stream_id = int(f"{self.course.id}{self.id}")
@@ -227,7 +227,8 @@ class Lesson():
                 caption_files = []
                 # Save captions
                 logger.debug(f"Downloading {len(caption_streams)} caption streams")
-                for i, caption_stream in enumerate(caption_streams):
+                for caption_stream in caption_streams:
+                    i = caption_streams.index(caption_stream)
                     file_name = f"sub_{caption_stream['locale_id']}.vtt"
 
                     if not os.path.exists(file_name):
@@ -237,14 +238,14 @@ class Lesson():
 
                     caption_input += f"-i {file_name} "
                     caption_map += f"-map {i} "
-                    caption_metadata += caption_metadata + f"-metadata:s:s:{i} language={caption_stream['video_label'].split(' ')[0]}"
+                    caption_metadata += f"-metadata:s:s:{i} language={caption_stream['video_label'].split(' ')[0]} "
                     logger.debug(f"Downloaded {caption_stream['video_label']} captions")
                 
                 caption_ffmpeg = caption_input + caption_map + caption_metadata
 
             # Merge into single file
             ffmpeg_command = f'ffmpeg -f concat -i .udownsegments {caption_ffmpeg} -acodec copy -vcodec copy "{download_location}"'
-            logger.debug(f"Generated ffmpeg command: {ffmpeg_command}")
+            logger.debug(ffmpeg_command)
             os.system(ffmpeg_command)
             logger.success(f"Downloaded Lesson{self.h_index[0]}.{self.h_index[1]} {self.title}")
 
