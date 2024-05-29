@@ -134,8 +134,8 @@ class Lesson():
         for section in self.course.content:
             if self in section['lessons']:
                 return section
-            else:
-                logger.error(f"Could not find section containing {self.title}")
+            
+            logger.error(f"Could not find section containing {self.title}")
 
     def download(self, settings:SettingsManager, driver:webdriver) -> None:
         logger.debug(f"Download {self.title}")
