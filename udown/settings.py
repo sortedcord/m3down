@@ -4,13 +4,13 @@ from utils import ExtendedEnum
 import os
 from enum import Enum
 
-from utils import slugify
 
 class CacheRole(ExtendedEnum):
     courseIdLookup = "courseIdLookup"
     courseContent = "courseContent"
     lessonStreams = "lessonStreams"
     purchasedCourses = "purchasedCourses"
+    articleBody =  "articleBody"
 
 class CacheSetting():
     def __init__(self, role:CacheRole, enabled:bool, expire:int) -> None:
@@ -111,7 +111,6 @@ class SeleniumSettings():
     def __init__(self, webdriver_path:str="chrome/chromedriver.exe", browser_path:str="chrome/chrome.exe", headless:bool=False) -> None:
         self.webdriver_path = webdriver_path
         self.browser_path = browser_path
-        self.headless = headless
 
 
 class CookieProcessType(Enum):
@@ -156,7 +155,6 @@ class SettingsManager():
             self.selenium = SeleniumSettings(
                 webdriver_path=settings_dict["selenium"]["webdriver_path"],
                 browser_path=settings_dict["selenium"]["browser_path"],
-                headless=settings_dict["selenium"]["headless"]
             )
 
             self.download_video_resolution = settings_dict['downloads']['video_resolution']

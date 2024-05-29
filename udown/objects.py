@@ -12,6 +12,7 @@ from rich.progress import Progress
 from settings import SettingsManager, CacheRole
 from web import request_xhr
 from utils import slugify, parse_m3u, get_filename_from_link, download_ts
+from api import fetch_lesson_data, fetch_article_body
 
 
 class Course():
@@ -133,21 +134,24 @@ class Lesson():
     def get_section(self) -> dict:
         for section in self.course.content:
             if self in section['lessons']:
-                return section
-            
-            logger.error(f"Could not find section containing {self.title}")
+                return section    
+        logger.error(f"Could not find section containing {self.title}")
 
     def download(self, settings:SettingsManager, driver:webdriver) -> None:
         logger.debug(f"Download {self.title}")
-        ext = "mkv"
 
-        logger.debug(settings.download_location)
+        if self.lesson_type == LessonType.VIDEO:
+            ext = "mkv"
+        elif self.lesson_type == LessonType.ARTICLE:
+            ext = "html"
+
         download_location = settings.download_location.replace('$course-slug', self.course.slug) \
                                                       .replace('$section-slug', slugify(self.get_section()['title'])) \
                                                       .replace('$ind-section-slug', f"{self.h_index[0]}-{slugify(self.get_section()['title'])}") \
                                                       .replace('$lesson-slug', slugify(self.title)) \
                                                       .replace('$ind-lesson-slug', f"{self.h_index[0]}.{self.h_index[1]}-{slugify(self.title)}") \
                                                       .replace('$ext', ext)
+        
         logger.debug(f"Set download location as {download_location}")
         os.makedirs(os.path.dirname(download_location), exist_ok=True)
 
@@ -155,17 +159,15 @@ class Lesson():
             logger.success(f"Downloaded Lesson{self.h_index[0]}.{self.h_index[1]} {self.title}")
             return
 
+        lesson_data = fetch_lesson_data(self.course.id, self.id, driver, settings)
 
         if self.lesson_type == LessonType.VIDEO:
             stream_id = int(f"{self.course.id}{self.id}")
 
-            # Fetch streams data
-            endpoint_url = f"https://www.udemy.com/api-2.0/users/me/subscribed-courses/{self.course.id}/lectures/{self.id}/?fields[lecture]=asset&fields[asset]=asset_type,media_sources,captions,slides,slide_urls,download_urls,external_url&q=0.03258319668748011"
-            stream_data = request_xhr(driver, endpoint_url, settings, CacheRole.lessonStreams, stream_id)
-            _link = stream_data['asset']['media_sources'][0]['src']
+            stream_qualities_url = lesson_data['asset']['media_sources'][0]['src']
 
             # Get streams
-            content = requests.get(_link).text
+            content = requests.get(stream_qualities_url).text
 
             video_streams = []
             for stream in content.split('#EXT-X-STREAM-INF:')[1:]:
@@ -222,7 +224,7 @@ class Lesson():
 
             # Download captions
             if settings.download_captions:
-                caption_streams = stream_data['asset']['captions']
+                caption_streams = lesson_data['asset']['captions']
 
                 caption_files = []
                 # Save captions
@@ -247,7 +249,6 @@ class Lesson():
             ffmpeg_command = f'ffmpeg -f concat -i .udownsegments {caption_ffmpeg} -acodec copy -vcodec copy "{download_location}"'
             logger.debug(ffmpeg_command)
             os.system(ffmpeg_command)
-            logger.success(f"Downloaded Lesson{self.h_index[0]}.{self.h_index[1]} {self.title}")
 
             # Clean Up
             for file in stream_segment_files:
@@ -261,3 +262,12 @@ class Lesson():
             for file in caption_files:
                 os.remove(file)
         
+        elif self.lesson_type == LessonType.ARTICLE:
+            asset_id = lesson_data['asset']['id']
+            lesson_body = fetch_article_body(asset_id, self.id, self.course.id, driver, settings)
+
+            with open(download_location, 'w') as f:
+                f.write(lesson_body['body'])
+        
+        logger.success(f"Downloaded Lesson{self.h_index[0]}.{self.h_index[1]} {self.title}")
+            

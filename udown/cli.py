@@ -11,7 +11,7 @@ from api import fetch_purchased_courses
 if __name__ == '__main__':
     SETTINGS = SettingsManager()
 
-    driver:webdriver = setup_selenium(SETTINGS.selenium.webdriver_path, SETTINGS.selenium.browser_path, SETTINGS.selenium.headless)
+    driver:webdriver = setup_selenium(SETTINGS.selenium.webdriver_path, SETTINGS.selenium.browser_path)
     logger.debug("Created driver instance")
 
     if SETTINGS.auth == 'password':

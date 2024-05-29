@@ -6,8 +6,7 @@
     "cookies": "cookies.json",
     "selenium": {
         "webdriver_path": "chrome/chromedriver.exe",
-        "browser_path": "chrome/chrome.exe",
-        "headless": false
+        "browser_path": "chrome/chrome.exe"
         },
     "cache": {
         "directory":".ud_cache",
@@ -27,13 +26,17 @@
             "purchasedCourses": {
                 "use_cache": true,
                 "expire": 86400
+            },
+            "articleBody": {
+                "use_cache": true,
+                "expire": 86400
             }
         }        
     },
     "downloads": {
         "video_resolution": "max",
         "location": "downloads/$course-slug/$ind-section-slug/$ind-lesson-slug.$ext",
-        "threads":4,
+        "threads":1,
         "captions":true
     },
     "xhr_headers": "headers.txt"

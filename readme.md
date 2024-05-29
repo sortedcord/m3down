@@ -71,7 +71,7 @@ Assuming you are running this in a virtenv, you can simply install the requireme
 Running the script is as simple as:
 
 ```sh
-$ python3 cli.py
+$ python3 udown/cli.py
 ```
 
 No commandline arguments are needed since everything is configured in the settings file.

@@ -39,13 +39,12 @@ def suppress_exception_in_del(uc:webdriver) -> None:
     setattr(uc.Chrome, '__del__', new_del)
 
 
-def setup_selenium(webdriver_path:str, browser_binary:str, run_headless:bool=True) -> webdriver:
+def setup_selenium(webdriver_path:str, browser_binary:str) -> webdriver:
     suppress_exception_in_del(webdriver)
 
     service = Service(executable_path=webdriver_path)
     options = webdriver.ChromeOptions()
-    if run_headless:
-        options.add_argument("--headless=new")
+
     options.binary_location = browser_binary
     options.add_argument("--disable-blink-features=AutomationControlled")
     driver = webdriver.Chrome(service=service, options=options)
@@ -53,7 +52,7 @@ def setup_selenium(webdriver_path:str, browser_binary:str, run_headless:bool=Tru
     return driver
 
 
-def request_xhr(driver:webdriver, request_url:str, settings:SettingsManager=None, cache_role:CacheRole=None, cache_id:int=None) -> dict:
+def request_xhr(driver:webdriver, request_url:str, settings:SettingsManager=None, cache_role:CacheRole=None, cache_id:str=None) -> dict:
     logger.debug(request_url)
     use_cache = False
     if None not in (settings, cache_role, cache_id):
