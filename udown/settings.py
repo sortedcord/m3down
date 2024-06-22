@@ -59,14 +59,14 @@ class CacheManager():
     
     def location(self, role:CacheRole, id:int=None) -> str:
         if id is None: id = ""
-        return os.path.join(self.directory, role.name, id)
+        return os.path.join(self.directory, role.name, str(id))
 
     def delete(self, role:CacheRole, id:int):
         location = self.location(role, id)
-        if os.location.exists(location):
+        if os.path.exists(location):
             os.remove(location)
         else:
-            logger.warn(f"Tried to delete cache file at {location} does not exist.")
+            logger.warning(f"Tried to delete cache file at {location} does not exist.")
         
 
 class CredentialsObject():

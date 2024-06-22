@@ -1,4 +1,7 @@
 
+> ### DRM Protection
+> This tool does not bypass or circumvent DRM in any way. So incase the lectures are protected by DRM, this tool cannot be used to download them.
+
 ## Setting Up
 
 This project only supports chromium based browsers, so you will need to install the browser along with a supported webdriver.

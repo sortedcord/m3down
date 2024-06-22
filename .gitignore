@@ -1,5 +1,6 @@
 __pycache__/
 chrome/
+.env/
 .vscode
 
 .ud_cache
